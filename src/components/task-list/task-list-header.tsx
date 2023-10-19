@@ -27,6 +27,24 @@ export const TaskListHeaderDefault: React.FC<{
         <div
           className={styles.ganttTable_HeaderItem}
           style={{
+            minWidth: 30,
+            maxWidth: 65,
+          }}
+        >
+          &nbsp;#
+        </div>
+        <div
+          className={styles.ganttTable_HeaderItem}
+          style={{
+            minWidth: 16,
+            maxWidth: 16,
+          }}
+        >
+          &nbsp;#
+        </div>
+        <div
+          className={styles.ganttTable_HeaderItem}
+          style={{
             minWidth: rowNameWidth,
           }}
         >
