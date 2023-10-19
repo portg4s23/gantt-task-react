@@ -101,7 +101,7 @@ export const TaskListTableDefault: React.FC<{
           >
             <div className={styles.taskListCell}
               style={{
-                minWidth: 30,
+                minWidth: 65,
                 maxWidth: 65,
               }}
             >
