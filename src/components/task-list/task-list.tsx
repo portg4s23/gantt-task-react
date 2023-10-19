@@ -33,7 +33,9 @@ export type TaskListProps = {
     selectedTaskId: string;
     setSelectedTask: (taskId: string) => void;
     onExpanderClick: (task: Task) => void;
+    onClick: (task: Task) => void;
   }>;
+  onClick: (task: Task) => void;
 };
 
 export const TaskList: React.FC<TaskListProps> = ({
@@ -53,6 +55,7 @@ export const TaskList: React.FC<TaskListProps> = ({
   horizontalContainerClass,
   TaskListHeader,
   TaskListTable,
+  onClick,
 }) => {
   const horizontalContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -68,6 +71,7 @@ export const TaskList: React.FC<TaskListProps> = ({
     rowWidth,
   };
   const selectedTaskId = selectedTask ? selectedTask.id : "";
+
   const tableProps = {
     rowHeight,
     rowWidth,
@@ -78,6 +82,7 @@ export const TaskList: React.FC<TaskListProps> = ({
     selectedTaskId: selectedTaskId,
     setSelectedTask,
     onExpanderClick,
+    onClick,
   };
 
   return (

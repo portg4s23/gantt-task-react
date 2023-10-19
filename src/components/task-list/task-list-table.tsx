@@ -15,10 +15,9 @@ const toLocaleDateStringFactory =
     return lds;
   };
 const dateTimeOptions: Intl.DateTimeFormatOptions = {
-  weekday: "short",
+  day: "2-digit",
+  month: "2-digit",
   year: "numeric",
-  month: "long",
-  day: "numeric",
 };
 
 export const TaskListTableDefault: React.FC<{
@@ -31,6 +30,7 @@ export const TaskListTableDefault: React.FC<{
   selectedTaskId: string;
   setSelectedTask: (taskId: string) => void;
   onExpanderClick: (task: Task) => void;
+  onClick: (task: Task) => void | undefined;
 }> = ({
   rowHeight,
   rowWidth,
@@ -39,11 +39,39 @@ export const TaskListTableDefault: React.FC<{
   fontSize,
   locale,
   onExpanderClick,
+  onClick,
 }) => {
   const toLocaleDateString = useMemo(
     () => toLocaleDateStringFactory(locale),
     [locale]
   );
+
+  const handleOnClick = (task: Task) => {
+    if(onClick) onClick(task)
+  }
+
+  const rowNameWidth = `${parseInt(rowWidth, 10) + 84}px`
+
+  function renderTextBasedOnType(type: string, text: any) {
+    return type === "project" ? <b>{text}</b> : text;
+  }
+
+  function calculateDurationString(duration: number | undefined) {
+    if (duration !== undefined) {
+      if (duration === 0) {
+        return "0 days";
+      } else if (duration === 1) {
+        return "1 day";
+      } else if (duration > 1) {
+        return `${duration} days`;
+      } else {
+        // Handle non-positive values if needed
+        return "";
+      }
+    } else {
+      return "";
+    }
+  }
 
   return (
     <div
@@ -53,13 +81,17 @@ export const TaskListTableDefault: React.FC<{
         fontSize: fontSize,
       }}
     >
-      {tasks.map(t => {
+      {tasks.map((t) => {
         let expanderSymbol = "";
         if (t.hideChildren === false) {
-          expanderSymbol = "▼";
+          expanderSymbol = " ▼ ";
         } else if (t.hideChildren === true) {
-          expanderSymbol = "▶";
+          expanderSymbol = " ▶ ";
         }
+
+        const duration = calculateDurationString(t.duration);
+        const start = toLocaleDateString(t.start, dateTimeOptions).replace(/\//g, '-')
+        const end = toLocaleDateString(t.end, dateTimeOptions).replace(/\//g, '-')
 
         return (
           <div
@@ -67,26 +99,42 @@ export const TaskListTableDefault: React.FC<{
             style={{ height: rowHeight }}
             key={`${t.id}row`}
           >
+            <div className={styles.taskListCell}
+              style={{
+                minWidth: 30,
+                maxWidth: 65,
+              }}
+            >
+              <div>&nbsp;{t.hierarchicalNumber}</div>
+            </div>
+            <div className={styles.taskListCell}
+              style={{
+                minWidth: 16,
+                maxWidth: 16,
+              }}
+            >
+              <div
+                className={
+                  expanderSymbol
+                    ? styles.taskListExpander
+                    : styles.taskListEmptyExpander
+                }
+                onClick={() => onExpanderClick(t)}
+              >
+                {expanderSymbol}
+              </div>
+            </div>
             <div
               className={styles.taskListCell}
               style={{
-                minWidth: rowWidth,
-                maxWidth: rowWidth,
+                minWidth: rowNameWidth,
+                maxWidth: rowNameWidth,
+                cursor: "pointer",
               }}
               title={t.name}
             >
               <div className={styles.taskListNameWrapper}>
-                <div
-                  className={
-                    expanderSymbol
-                      ? styles.taskListExpander
-                      : styles.taskListEmptyExpander
-                  }
-                  onClick={() => onExpanderClick(t)}
-                >
-                  {expanderSymbol}
-                </div>
-                <div>{t.name}</div>
+                <div style={{ display: 'block' }} onClick={() => handleOnClick(t)}>{renderTextBasedOnType(t.type, t.name)}</div>
               </div>
             </div>
             <div
@@ -96,7 +144,7 @@ export const TaskListTableDefault: React.FC<{
                 maxWidth: rowWidth,
               }}
             >
-              &nbsp;{toLocaleDateString(t.start, dateTimeOptions)}
+              &nbsp;{t.type == "project" ? <b>{duration}</b> : duration}
             </div>
             <div
               className={styles.taskListCell}
@@ -105,7 +153,16 @@ export const TaskListTableDefault: React.FC<{
                 maxWidth: rowWidth,
               }}
             >
-              &nbsp;{toLocaleDateString(t.end, dateTimeOptions)}
+              &nbsp;{renderTextBasedOnType(t.type, start)}
+            </div>
+            <div
+              className={styles.taskListCell}
+              style={{
+                minWidth: rowWidth,
+                maxWidth: rowWidth,
+              }}
+            >
+              &nbsp;{renderTextBasedOnType(t.type, end)}
             </div>
           </div>
         );

@@ -431,6 +431,10 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     onDelete,
   };
 
+  const handleOnClick = (task: Task) => {
+    if (onClick) onClick(task)
+  }
+
   const tableProps: TaskListProps = {
     rowHeight,
     rowWidth: listCellWidth,
@@ -448,6 +452,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     onExpanderClick: handleExpanderClick,
     TaskListHeader,
     TaskListTable,
+    onClick : handleOnClick,
   };
   return (
     <div>

@@ -31,6 +31,8 @@ export interface Task {
   dependencies?: string[];
   hideChildren?: boolean;
   displayOrder?: number;
+  duration?: number;
+  hierarchicalNumber?: string;
 }
 
 export interface EventOption {
