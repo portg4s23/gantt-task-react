@@ -8,7 +8,7 @@ export const TaskListHeaderDefault: React.FC<{
   fontSize: string;
 }> = ({ headerHeight, fontFamily, fontSize, rowWidth }) => {
 
-  const rowNameWidth = `${parseInt(rowWidth, 10) + 100}px`
+  const rowNameWidth = `${parseInt(rowWidth, 10) + 84}px`
 
   return (
     <div
