@@ -1,3 +1,5 @@
+import React from "react";
+
 export enum ViewMode {
   Hour = "Hour",
   QuarterDay = "Quarter Day",
@@ -14,6 +16,7 @@ export interface Task {
   id: string;
   type: TaskType;
   name: string;
+  displayName: React.ReactNode;
   start: Date;
   end: Date;
   /**
@@ -29,6 +32,7 @@ export interface Task {
   isDisabled?: boolean;
   project?: string;
   dependencies?: string[];
+  dependencySelector?: React.ReactNode;
   hideChildren?: boolean;
   displayOrder?: number;
   duration?: number;

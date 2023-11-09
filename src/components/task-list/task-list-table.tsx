@@ -164,6 +164,15 @@ export const TaskListTableDefault: React.FC<{
             >
               &nbsp;{renderTextBasedOnType(t.type, end)}
             </div>
+            <div
+              className={styles.taskListCell}
+              style={{
+                minWidth: rowWidth,
+                maxWidth: rowWidth,
+              }}
+            >
+              &nbsp;{t.dependencySelector}
+            </div>
           </div>
         );
       })}
