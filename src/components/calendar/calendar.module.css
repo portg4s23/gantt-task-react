@@ -1,3 +1,7 @@
+
+/* 
+  fill is calendar day text color
+*/
 .calendarBottomText {
   text-anchor: middle;
   fill: #333;
@@ -9,10 +13,16 @@
   pointer-events: none;
 }
 
+/* 
+  stroke is month separator line at the top
+*/
 .calendarTopTick {
   stroke: #e6e4e4;
 }
 
+/* 
+  fill is month text color
+*/
 .calendarTopText {
   text-anchor: middle;
   fill: #555;
@@ -24,6 +34,10 @@
   pointer-events: none;
 }
 
+/* 
+  fill is whole bg
+  stroke all around border color
+*/
 .calendarHeader {
   fill: #ffffff;
   stroke: #e0e0e0;

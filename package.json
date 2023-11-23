@@ -1,6 +1,6 @@
 {
-  "name": "@portg4s/gantt-task-react-x",
-  "version": "0.4.5",
+  "name": "@portg4s/gantt-task-react-test",
+  "version": "0.4.7",
   "description": "Interactive Gantt Chart for React with TypeScript Modified By Portg4s",
   "author": "MaTeMaTuK <maksym.vikarii@gmail.com>",
   "homepage": "https://github.com/MaTeMaTuK/gantt-task-react",

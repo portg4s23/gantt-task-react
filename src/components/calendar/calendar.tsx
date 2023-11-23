@@ -121,13 +121,14 @@ export const Calendar: React.FC<CalendarProps> = ({
     return [topValues, bottomValues];
   };
 
+  //
   const getCalendarValuesForMonth = () => {
     const topValues: ReactChild[] = [];
     const bottomValues: ReactChild[] = [];
     const topDefaultHeight = headerHeight * 0.5;
     for (let i = 0; i < dateSetup.dates.length; i++) {
       const date = dateSetup.dates[i];
-      const bottomValue = getLocaleMonth(date, locale);
+      const bottomValue = getLocaleMonth(date, locale).substring(0, 3);
       bottomValues.push(
         <text
           key={bottomValue + date.getFullYear()}
@@ -165,6 +166,7 @@ export const Calendar: React.FC<CalendarProps> = ({
     return [topValues, bottomValues];
   };
 
+  //
   const getCalendarValuesForWeek = () => {
     const topValues: ReactChild[] = [];
     const bottomValues: ReactChild[] = [];
@@ -214,6 +216,7 @@ export const Calendar: React.FC<CalendarProps> = ({
     return [topValues, bottomValues];
   };
 
+  // 
   const getCalendarValuesForDay = () => {
     const topValues: ReactChild[] = [];
     const bottomValues: ReactChild[] = [];
@@ -221,9 +224,10 @@ export const Calendar: React.FC<CalendarProps> = ({
     const dates = dateSetup.dates;
     for (let i = 0; i < dates.length; i++) {
       const date = dates[i];
-      const bottomValue = `${getLocalDayOfWeek(date, locale, "short")}, ${date
-        .getDate()
-        .toString()}`;
+      const bottomValue = date.getDate().toString().padStart(2, '0');
+      // const bottomValue = `${getLocalDayOfWeek(date, locale, "short")}, ${date
+      //   .getDate()
+      //   .toString()}`;
 
       bottomValues.push(
         <text
@@ -236,8 +240,9 @@ export const Calendar: React.FC<CalendarProps> = ({
         </text>
       );
       if (
-        i + 1 !== dates.length &&
-        date.getMonth() !== dates[i + 1].getMonth()
+        // i + 1 !== dates.length &&
+        // date.getMonth() !== dates[i + 1].getMonth()
+        i !== 0 && date.getMonth() !== dates[i - 1].getMonth()
       ) {
         const topValue = getLocaleMonth(date, locale);
 

@@ -2,6 +2,12 @@ import React, { useMemo } from "react";
 import styles from "./task-list-table.module.css";
 import { Task } from "../../types/public-types";
 
+interface GanttListItem {
+  className?: string;
+  style?: React.CSSProperties;
+  content?: React.ReactNode | string
+}
+
 const localeDateStringCache = {};
 const toLocaleDateStringFactory =
   (locale: string) =>
@@ -47,13 +53,21 @@ export const TaskListTableDefault: React.FC<{
   );
 
   const handleOnClick = (task: Task) => {
-    if(onClick) onClick(task)
+    if (onClick) onClick(task);
+  };
+
+  const rowNameWidth = `${parseInt(rowWidth, 10) + 84}px`;
+
+  function calculateIndentation(indent: number = 0) {
+    return `${indent*8}px`;
   }
 
-  const rowNameWidth = `${parseInt(rowWidth, 10) + 84}px`
-
   function renderTextBasedOnType(type: string, text: any) {
-    return type === "project" ? <b>{text}</b> : text;
+
+    return type === "project" ? (
+      <b>{text}</b>
+    ) : text;
+
   }
 
   function calculateDurationString(duration: number | undefined) {
@@ -73,6 +87,8 @@ export const TaskListTableDefault: React.FC<{
     }
   }
 
+  const tasksLength = tasks.length - 1
+
   return (
     <div
       className={styles.taskListWrapper}
@@ -81,7 +97,10 @@ export const TaskListTableDefault: React.FC<{
         fontSize: fontSize,
       }}
     >
-      {tasks.map((t) => {
+      {tasks.map((t, index) => {
+
+        const isNotLastTask = index < tasksLength 
+
         let expanderSymbol = "";
         if (t.hideChildren === false) {
           expanderSymbol = " ▼ ";
@@ -90,92 +109,127 @@ export const TaskListTableDefault: React.FC<{
         }
 
         const duration = calculateDurationString(t.duration);
-        const start = toLocaleDateString(t.start, dateTimeOptions).replace(/\//g, '-')
-        const end = toLocaleDateString(t.end, dateTimeOptions).replace(/\//g, '-')
+        const start = toLocaleDateString(t.start, dateTimeOptions).replace(
+          /\//g,
+          "-"
+        );
+        const end = toLocaleDateString(t.end, dateTimeOptions).replace(
+          /\//g,
+          "-"
+        );
+
+        const calculatedIndentation = calculateIndentation(t.indent);
+
+        const ganttListItem: GanttListItem[] = [
+          {
+            content: <div>&nbsp;{t.hierarchicalNumber}&nbsp;</div>,
+            className: styles.taskListCell,
+            style: {
+              minWidth: 50,
+              maxWidth: 50,
+              borderBottom: isNotLastTask ? '1px solid #ebeff2' : 'none',
+            },
+          },
+          {
+            content: (
+              <div className={styles.taskListNameWrapper}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 5,
+                    paddingLeft: calculatedIndentation,
+                  }}
+                >
+                  <div onClick={() => onExpanderClick(t)} className={ expanderSymbol ? styles.taskListExpander : styles.taskListEmptyExpander }>
+                    {expanderSymbol}
+                  </div>
+
+                  <div style={{ display: "block" }} title={t.name} onClick={() => handleOnClick(t)}>
+                    {t.displayName}
+                  </div>
+                </div>
+              </div>
+            ),
+            className: styles.taskListCell,
+            style: {
+              minWidth: rowNameWidth,
+              maxWidth: rowNameWidth,
+              cursor: "pointer",
+              borderBottom: isNotLastTask ? '1px solid #ebeff2' : 'none',
+            },
+          },
+          {
+            content: <div>&nbsp;{t.type == "project" ? <b>{duration}</b> : duration}&nbsp;</div>,
+            className: styles.taskListCell,
+            style: {
+              minWidth: rowWidth,
+              maxWidth: rowWidth,
+              borderBottom: isNotLastTask ? '1px solid #ebeff2' : 'none',
+            },
+          },
+          {
+            content: <div>&nbsp;{renderTextBasedOnType(t.type, start)}&nbsp;</div>,
+            className: styles.taskListCell,
+            style: {
+              minWidth: rowWidth,
+              maxWidth: rowWidth,
+              borderBottom: isNotLastTask ? '1px solid #ebeff2' : 'none',
+            },
+          },
+          {
+            content: <div>&nbsp;{renderTextBasedOnType(t.type, end)}&nbsp;</div>,
+            className: styles.taskListCell,
+            style: {
+              minWidth: rowWidth,
+              maxWidth: rowWidth,
+              borderBottom: isNotLastTask ? '1px solid #ebeff2' : 'none',
+            },
+          },
+          {
+            content: <div>&nbsp;{t.predecessor}</div>,
+            className: styles.taskListCell,
+            style: {
+              minWidth: `${parseInt(rowWidth, 10) + 10}px`,
+              maxWidth: `${parseInt(rowWidth, 10) + 10}px`,
+              borderBottom: isNotLastTask ? '1px solid #ebeff2' : 'none',
+            },
+          },
+          {
+            content: <div>&nbsp;{t.actions}&nbsp;</div>,
+            className: styles.taskListCell,
+            style: {
+              width: '60px',
+              borderRight: '1px solid #ebeff2',
+              borderBottom: isNotLastTask ? '1px solid #ebeff2' : 'none',
+            },
+          },
+        ]
+
+        // Wrap list items in a div
+        const renderListItems = ganttListItem.map((item: GanttListItem, i: number) => (
+          <div
+              key={`task-list-table-${i}`}
+              className={item.className}
+              style={item.style}
+            >
+              {item.content}
+          </div>
+        ))
 
         return (
           <div
             className={styles.taskListTableRow}
-            style={{ height: rowHeight }}
+            style={{ height: rowHeight, borderBottom: "1px solid #e9ecef" }}
             key={`${t.id}row`}
           >
-            <div className={styles.taskListCell}
-              style={{
-                minWidth: 65,
-                maxWidth: 65,
-              }}
-            >
-              <div>&nbsp;{t.hierarchicalNumber}</div>
-            </div>
-            <div className={styles.taskListCell}
-              style={{
-                minWidth: 16,
-                maxWidth: 16,
-              }}
-            >
-              <div
-                className={
-                  expanderSymbol
-                    ? styles.taskListExpander
-                    : styles.taskListEmptyExpander
-                }
-                onClick={() => onExpanderClick(t)}
-              >
-                {expanderSymbol}
-              </div>
-            </div>
-            <div
-              className={styles.taskListCell}
-              style={{
-                minWidth: rowNameWidth,
-                maxWidth: rowNameWidth,
-                cursor: "pointer",
-              }}
-              title={t.name}
-            >
-              <div className={styles.taskListNameWrapper}>
-                <div style={{ display: 'block' }} onClick={() => handleOnClick(t)}>{renderTextBasedOnType(t.type, t.name)}</div>
-              </div>
-            </div>
-            <div
-              className={styles.taskListCell}
-              style={{
-                minWidth: rowWidth,
-                maxWidth: rowWidth,
-              }}
-            >
-              &nbsp;{t.type == "project" ? <b>{duration}</b> : duration}
-            </div>
-            <div
-              className={styles.taskListCell}
-              style={{
-                minWidth: rowWidth,
-                maxWidth: rowWidth,
-              }}
-            >
-              &nbsp;{renderTextBasedOnType(t.type, start)}
-            </div>
-            <div
-              className={styles.taskListCell}
-              style={{
-                minWidth: rowWidth,
-                maxWidth: rowWidth,
-              }}
-            >
-              &nbsp;{renderTextBasedOnType(t.type, end)}
-            </div>
-            <div
-              className={styles.taskListCell}
-              style={{
-                minWidth: rowWidth,
-                maxWidth: rowWidth,
-              }}
-            >
-              &nbsp;{t.dependencySelector}
-            </div>
+            
+            {renderListItems}
+            
           </div>
         );
       })}
     </div>
   );
+
 };

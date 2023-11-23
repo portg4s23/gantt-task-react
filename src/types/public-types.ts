@@ -32,11 +32,14 @@ export interface Task {
   isDisabled?: boolean;
   project?: string;
   dependencies?: string[];
-  dependencySelector?: React.ReactNode;
+  actions?: React.ReactNode;
   hideChildren?: boolean;
   displayOrder?: number;
   duration?: number;
   hierarchicalNumber?: string;
+  indent?: number;
+  level?: number;
+  predecessor?: React.ReactNode
 }
 
 export interface EventOption {
@@ -84,12 +87,15 @@ export interface DisplayOption {
   viewMode?: ViewMode;
   viewDate?: Date;
   preStepsCount?: number;
+  postStepsCount?: number;
   /**
    * Specifies the month name language. Able formats: ISO 639-2, Java Locale
    */
   locale?: string;
   rtl?: boolean;
 }
+
+// create an interface to manage which rows to be shown in the table
 
 export interface StylingOption {
   headerHeight?: number;

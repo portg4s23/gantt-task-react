@@ -72,7 +72,8 @@ export const startOfDate = (date: Date, scale: DateHelperScales) => {
 export const ganttDateRange = (
   tasks: Task[],
   viewMode: ViewMode,
-  preStepsCount: number
+  preStepsCount: number,
+  postStepsCount: number
 ) => {
   let newStartDate: Date = tasks[0].start;
   let newEndDate: Date = tasks[0].start;
@@ -84,6 +85,7 @@ export const ganttDateRange = (
       newEndDate = task.end;
     }
   }
+
   switch (viewMode) {
     case ViewMode.Year:
       newStartDate = addToDate(newStartDate, -1, "year");
@@ -117,7 +119,7 @@ export const ganttDateRange = (
       newStartDate = startOfDate(newStartDate, "day");
       newStartDate = addToDate(newStartDate, -1 * preStepsCount, "day");
       newEndDate = startOfDate(newEndDate, "day");
-      newEndDate = addToDate(newEndDate, 19, "day");
+      newEndDate = addToDate(newEndDate, postStepsCount, "day");
       break;
     case ViewMode.QuarterDay:
       newStartDate = startOfDate(newStartDate, "day");
@@ -138,6 +140,7 @@ export const ganttDateRange = (
       newEndDate = addToDate(newEndDate, 1, "day");
       break;
   }
+
   return [newStartDate, newEndDate];
 };
 
@@ -212,7 +215,7 @@ export const getLocalDayOfWeek = (
  */
 const getMonday = (date: Date) => {
   const day = date.getDay();
-  const diff = date.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
+  const diff = date.getDate() - day + (day === 0 ? -7 : 1); // adjust when day is sunday
   return new Date(date.setDate(diff));
 };
 
